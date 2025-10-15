@@ -1,0 +1,22 @@
+# ERRO: Vulnerabilidade de segurança no sistema de login
+# Arquivo: authentication.py
+
+def validar_login(email, senha):
+    # VULNERABILIDADE CRÍTICA: SQL Injection e senhas em texto puro
+    query = f"SELECT * FROM usuarios WHERE email = '{email}' AND senha = '{senha}'"
+   
+    # Senha não criptografada - violação de segurança
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute(query)  # SQL Injection possível aqui!
+   
+    usuario = cursor.fetchone()
+   
+    if usuario:
+        # LOG sensível exposto - vazamento de informação
+        print(f"USUÁRIO LOGADO: {email} - SENHA: {senha}")
+        return True
+    return False
+
+# PROBLEMA: Falha grave de segurança que permite SQL Injection
+# e armazenamento de senhas em texto puro
